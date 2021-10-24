@@ -1,0 +1,41 @@
+version: "3.4"
+
+services:
+  fin-app:
+    build: .
+    hostname: fin-api
+    container_name: fin-api
+    restart: always
+    ports:
+      - "3030:3030"
+    command: ["npm", "run", "dev"]
+    volumes:
+      - ./:/usr/app
+    depends_on:
+      - fin-postgres
+    networks:
+      - default
+
+  fin-postgres:
+    image: postgres:latest
+    hostname: fin-postgres
+    container_name: fin-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: fin_api
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - "/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock"
+      - "fin-postgres:/var/lib/postgresql/data"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  fin-postgres:
